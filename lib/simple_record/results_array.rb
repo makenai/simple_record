@@ -208,6 +208,10 @@ module SimpleRecord
             @items.delete_at(index)
         end
 
+        # Needed for collection partials to work correctly
+        def to_ary
+          self
+        end
 
         # A couple json serialization methods copied from active_support
         def as_json(options = nil) #:nodoc:
