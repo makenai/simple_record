@@ -907,7 +907,7 @@ module SimpleRecord
           ret = results[:single]
           cache_results(ret)
         else
-          if results[:items] #.is_a?(Array)
+          if results[:items] #.is_a?(Array)            
             cache_results(results[:items])
             ret = SimpleRecord::ResultsArray.new(self, params, results, next_token)
           end
@@ -952,13 +952,29 @@ module SimpleRecord
 #            total    = options[:total_entries].to_i
       options[:page]     = page.to_i # makes sure it's to_i
       options[:per_page] = per_page.to_i
-      options[:limit]    = options[:page] * options[:per_page]
+      options[:limit]    = options[:per_page]
 #            puts 'paging options=' + options.inspect
+
+      if options[:page] > 1
+        options[:limit]    = ( options[:page] - 1 ) * options[:per_page]
+        token = get_page_token( options )
+        if token
+          options[:limit] = options[:per_page]
+          options[:next_token] = token
+        end
+      end
+
       fr                 = find(:all, options)
       return fr
 
     end
 
+    # Gets the next_token for the record _right_before_ the record you want to start at
+    def self.get_page_token( options )
+      sql = build_select(options.merge({ :select => 'COUNT(*)' }))
+      pr = connection.select(sql)
+      return pr[:next_token]
+    end
 
     def self.convert_condition_params(options)
       return if options.nil?

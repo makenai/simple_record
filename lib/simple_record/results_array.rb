@@ -23,10 +23,6 @@ module SimpleRecord
             @box_usage        = results[:box_usage].to_f
             @request_id       = results[:request_id]
             @options          = @params[1]
-            if @options[:page]
-                load_to(@options[:per_page] * @options[:page])
-                @start_at = @options[:per_page] * (@options[:page] - 1)
-            end
             @index = 0
             # puts 'RESULTS_ARRAY=' + self.inspect
         end
@@ -87,9 +83,6 @@ module SimpleRecord
 #             if @options[:per_page]
 #                return @items.size - @start_at
 #            end
-            if @next_token.nil?
-                return @items.size
-            end
             return @count if @count
 #            puts '@params=' + @params.inspect
             params_for_count    = @params.dup
@@ -97,6 +90,7 @@ module SimpleRecord
             params_for_count[1] = params_for_count[1].dup # for deep clone
             params_for_count[1].delete(:limit)
             params_for_count[1].delete(:per_token)
+            params_for_count[1].delete(:next_token)
             params_for_count[1][:called_by] = :results_array
 
             #       puts '@params2=' + @params.inspect
