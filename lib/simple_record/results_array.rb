@@ -58,9 +58,6 @@ module SimpleRecord
         # Will load items from SimpleDB up to i.
         def load_to(i)
             return if @items.size >= i
-            while @items.size < i && !@next_token.nil?
-                load_next_token_set
-            end
         end
 
         def first
@@ -129,16 +126,6 @@ module SimpleRecord
                 end
             end
             return if @clz.nil?
-
-            # no more items, but is there a next token?
-            unless @next_token.nil?
-                #puts 'finding more items...'
-                #puts 'params in block=' + params.inspect
-                #puts "i from results_array = " + @i.to_s
-
-                load_next_token_set
-                each2(i, &blk)
-            end
         end
 
         # for will_paginate support
