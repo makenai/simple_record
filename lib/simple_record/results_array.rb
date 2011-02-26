@@ -77,6 +77,10 @@ module SimpleRecord
         end
 
         def size
+          @items.size
+        end
+        
+        def item_count
 #             if @options[:per_page]
 #                return @items.size - @start_at
 #            end
@@ -133,7 +137,7 @@ module SimpleRecord
             #puts 'total_pages'
 #            puts  @params[1][:per_page].to_s
             return 1 if @params[1][:per_page].nil?
-            ret = (size / @params[1][:per_page].to_f).ceil
+            ret = (item_count / @params[1][:per_page].to_f).ceil
             #puts 'ret=' + ret.to_s
             ret
         end
